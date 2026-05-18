@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tg-digest"
-version = "0.1.0"
-description = "Telegram channels → AI summary → daily Markdown / Notion digest."
+version = "0.2.0"
+description = "Daily Telegram channel digest with OpenAI summarisation and pluggable Markdown output adapters (Notion, Obsidian, Logseq, Hugo, files, stdout, custom)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -45,3 +45,7 @@ tg-digest-channels = "tg_digest.channels:main"
 
 [tool.setuptools.packages.find]
 include = ["tg_digest*"]
+
+[tool.setuptools.package-data]
+# Bundle Markdown prompt templates so they're importable from the installed wheel.
+tg_digest = ["prompts/*.md"]
