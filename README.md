@@ -1,5 +1,9 @@
 # tg-digest
 
+[![PyPI version](https://img.shields.io/pypi/v/tg-digest.svg)](https://pypi.org/project/tg-digest/)
+[![Python versions](https://img.shields.io/pypi/pyversions/tg-digest.svg)](https://pypi.org/project/tg-digest/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Daily Markdown digest of your Telegram channels, summarised by an OpenAI chat
 model. Reads your subscribed channels via the official MTProto API (Telethon),
 batches them into one prompt, and writes a clean Markdown report. Pluggable
