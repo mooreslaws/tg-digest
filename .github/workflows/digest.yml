@@ -1,0 +1,78 @@
+# Daily Telegram digest — runs on schedule and writes results.
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   TELEGRAM_API_ID         — from my.telegram.org
+#   TELEGRAM_API_HASH       — from my.telegram.org
+#   TELEGRAM_SESSION_STRING — printed by `python -m tg_digest.auth`
+#   OPENAI_API_KEY          — OpenAI key
+#
+# Optional (only needed if you want Notion export):
+#   NOTION_TOKEN
+#   NOTION_NOTES_DB_ID
+#
+# Tip: copy your channels.example.yaml → channels.yaml and commit it so this
+# workflow knows which channels / folders to digest. (channels.yaml is in the
+# default .gitignore — remove that line if you want to commit it.)
+
+name: Telegram digest
+
+on:
+  schedule:
+    # Daily at 06:00 UTC. Adjust to your timezone.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+env:
+  # IANA timezone for "calendar day" — digest for date D covers the previous
+  # day 00:00–24:00 in this TZ.
+  TELEGRAM_DIGEST_DATE_TZ: Europe/Berlin
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check required secrets
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_SESSION_STRING: ${{ secrets.TELEGRAM_SESSION_STRING }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          missing=""
+          [ -z "$TELEGRAM_API_ID" ]         && missing="${missing}TELEGRAM_API_ID "
+          [ -z "$TELEGRAM_API_HASH" ]       && missing="${missing}TELEGRAM_API_HASH "
+          [ -z "$TELEGRAM_SESSION_STRING" ] && missing="${missing}TELEGRAM_SESSION_STRING "
+          [ -z "$OPENAI_API_KEY" ]          && missing="${missing}OPENAI_API_KEY "
+          if [ -n "$missing" ]; then
+            echo "::error::Missing required secrets: $missing"
+            exit 1
+          fi
+
+      - name: Run digest
+        env:
+          TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_SESSION_STRING: ${{ secrets.TELEGRAM_SESSION_STRING }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_NOTES_DB_ID: ${{ secrets.NOTION_NOTES_DB_ID }}
+        run: python -m tg_digest.digest
+
+      - name: Upload digest as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ github.run_id }}
+          path: reports/
+          if-no-files-found: ignore
+          retention-days: 30

@@ -1,0 +1,32 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Telegram session file (contains login credentials)
+*.session
+*.session-journal
+
+# Local channel config (each user maintains their own)
+channels.yaml
+
+# Generated reports
+/reports/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Editors
+.vscode/
+.idea/
+.DS_Store

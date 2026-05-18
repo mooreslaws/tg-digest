@@ -1,0 +1,42 @@
+# tg-digest — channel configuration
+#
+# Copy this file to ./channels.yaml and edit. You can mix and match the two
+# source mechanisms below.
+#
+#   folders:  — names of Telegram Folders set up inside your Telegram app.
+#               On every run the script reads the current channel list from
+#               your live filters, so adding/removing a channel in the app
+#               makes it appear/disappear in the next digest automatically.
+#
+#   channels: — explicit list of channels by @username. Useful if you don't
+#               use Telegram Folders, or you want to add channels that live
+#               outside any folder.
+
+defaults:
+  hours_back: 24
+  min_post_length: 150       # posts shorter than this are dropped (anti-noise)
+
+# Telegram Folders to include (case-sensitive — must match the exact folder
+# name in your Telegram app). Leave empty if you only want explicit channels.
+folders:
+  # - News
+  # - Research
+
+# Optional: per-channel overrides.
+# mode: digest      (default) — standard per-post summary.
+# mode: structured  — runs an alternate prompt that extracts tabular data,
+#                     good for high-volume feeds with repeating structure
+#                     (deal flow, job boards, product launches, …).
+# channel_overrides:
+#   high_volume_feed:
+#     label: "High Volume Feed"
+#     mode: structured
+#     max_posts: 50
+#     min_post_length: 30
+
+# Optional: manual channels (added on top of the folders above).
+# channels:
+#   - username: durov
+#     label: "Pavel Durov"
+#   - username: telegram
+#     label: "Telegram News"
